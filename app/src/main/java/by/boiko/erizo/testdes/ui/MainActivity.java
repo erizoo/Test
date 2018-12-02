@@ -1,6 +1,6 @@
 package by.boiko.erizo.testdes.ui;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,6 +17,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import by.boiko.erizo.testdes.R;
+import by.boiko.erizo.testdes.TestDes;
+import by.boiko.erizo.testdes.db.AppDatabase;
+import by.boiko.erizo.testdes.db.Employee;
 import by.boiko.erizo.testdes.db.RealmController;
 import by.boiko.erizo.testdes.db.RealmModel;
 import by.boiko.erizo.testdes.ui.adapters.RealmAdapter;
@@ -36,6 +40,8 @@ public class MainActivity extends BaseActivity implements MainMvpView{
     MainMvpPresenter<MainMvpView> presenter;
 
     private RealmAdapter realmAdapter;
+    private List<Employee> employees = new ArrayList<>();
+    private boolean isSaved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,74 +52,81 @@ public class MainActivity extends BaseActivity implements MainMvpView{
 
         realmAdapter = new RealmAdapter();
 
-        new RealmController(this).deleteAll();
-        new RealmController(this).addInfo("помидор", 2);
-        new RealmController(this).addInfo("банан", 5);
-        new RealmController(this).addInfo("огурец", 3);
-        new RealmController(this).addInfo("авокадо", 1);
+        SharedPreferences sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        isSaved = sharedPreferences.getBoolean("IS_SAVED", false);
 
-        setupAdapter();
-        Realm realm = Realm.getDefaultInstance();
-
-        presenter.filter();
+        if (!isSaved){
+            presenter.saveData();
+        }
+        presenter.getData();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                RealmResults<RealmModel> results = new RealmController(getContext()).searchForTitle(query);
-                List<RealmModel> realmModelList = realm.copyFromRealm(results);
-                realmAdapter.setItems(realmModelList);
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (!newText.equals("")){
-                    RealmResults<RealmModel> results = new RealmController(getContext()).searchForTitle(newText);
-                    List<RealmModel> realmModelList = realm.copyFromRealm(results);
-                    realmAdapter.setItems(realmModelList);
-                } else {
-                    RealmResults<RealmModel> results = new RealmController(getContext()).getInfo();
-                    List<RealmModel> realmModelList = realm.copyFromRealm(results);
-                    realmAdapter.setItems(realmModelList);
-                }
+                presenter.search(newText);
                 return true;
             }
         });
         searchView.onActionViewExpanded();
     }
 
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_main;
+    }
+
     private void setupAdapter() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        Realm realm = Realm.getDefaultInstance();
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(realmAdapter);
-        RealmResults<RealmModel> results = new RealmController(this).getInfo();
-        List<RealmModel> realmModelList = realm.copyFromRealm(results);
-        realmAdapter.setItems(realmModelList);
+
+        realmAdapter.setItems(employees);
         progressBar.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.first_button)
     public void ascendingSorting(){
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<RealmModel> results = new RealmController(getContext()).ascendingSorting();
-        List<RealmModel> realmModelList = realm.copyFromRealm(results);
-        realmAdapter.setItems(realmModelList);
+        presenter.ascendingSorting();
     }
 
     @OnClick(R.id.second_button)
     public void descendingSorting(){
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<RealmModel> results = new RealmController(getContext()).descendingSorting();
-        List<RealmModel> realmModelList = realm.copyFromRealm(results);
-        realmAdapter.setItems(realmModelList);
+        presenter.descendingSorting();
     }
 
     @Override
-    protected int getContentView() {
-        return R.layout.activity_main;
+    public void updateData(List<Employee> employees) {
+        this.employees.addAll(employees);
+        setupAdapter();
+    }
+
+    @Override
+    public void onSavedData() {
+        SharedPreferences sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = sharedPreferences.edit();
+        ed.putBoolean("IS_SAVED", true);
+        ed.apply();
+    }
+
+    @Override
+    public void onSearchedData(List<Employee> employees) {
+        realmAdapter.setItems(employees);
+    }
+
+    @Override
+    public void onAscendingSortingData(List<Employee> employees) {
+        realmAdapter.setItems(employees);
+    }
+
+    @Override
+    public void onDescendingSortingData(List<Employee> employees) {
+        realmAdapter.setItems(employees);
     }
 
 }

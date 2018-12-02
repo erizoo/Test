@@ -7,7 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import org.w3c.dom.Text;
 
@@ -17,13 +20,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.boiko.erizo.testdes.R;
+import by.boiko.erizo.testdes.db.Employee;
 import by.boiko.erizo.testdes.db.RealmModel;
 import by.boiko.erizo.testdes.ui.base.BaseViewHolder;
 
 public class RealmAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public Context context;
-    private List<RealmModel> realmModelList = new ArrayList<>();
+    private List<Employee> employeeList = new ArrayList<>();
 
     @NonNull
     @Override
@@ -40,12 +44,12 @@ public class RealmAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public int getItemCount() {
-        return realmModelList.size();
+        return employeeList.size();
     }
 
-    public void setItems(List<RealmModel> realmModelList) {
-        this.realmModelList.clear();
-        this.realmModelList.addAll(realmModelList);
+    public void setItems(List<Employee> employeeList) {
+        this.employeeList.clear();
+        this.employeeList.addAll(employeeList);
         notifyDataSetChanged();
     }
 
@@ -53,8 +57,12 @@ public class RealmAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
         @BindView(R.id.title)
         TextView title;
+        @BindView(R.id.type)
+        TextView type;
         @BindView(R.id.amount)
         TextView amount;
+        @BindView(R.id.image_view)
+        ImageView imageView;
 
         public RealmViewHolder(View itemView) {
             super(itemView);
@@ -65,8 +73,12 @@ public class RealmAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBind(int position) {
-            title.setText(realmModelList.get(position).getTitle());
-            amount.setText(realmModelList.get(position).getAmount() + " шт");
+            Glide.with(itemView)
+                    .load(employeeList.get(position).getImage())
+                    .into(imageView);
+            title.setText(employeeList.get(position).getTitle());
+            type.setText(employeeList.get(position).getType());
+            amount.setText(employeeList.get(position).getAmount() + " шт");
         }
     }
 }

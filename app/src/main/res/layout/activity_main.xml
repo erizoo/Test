@@ -21,8 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_view"
-        android:text="По возрастанию"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp"
+        android:text="По возрастанию" />
 
     <Button
         android:id="@+id/second_button"
@@ -30,8 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_view"
         android:layout_margin="10dp"
-        android:text="По убыванию"
-        android:layout_toEndOf="@+id/first_button" />
+        android:layout_toEndOf="@+id/first_button"
+        android:text="По убыванию" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
