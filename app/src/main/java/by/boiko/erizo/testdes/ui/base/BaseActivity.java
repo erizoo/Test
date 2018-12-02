@@ -28,7 +28,6 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
         unbinder = ButterKnife.bind(this);
-
         screenComponent = DaggerScreenComponent.builder()
                 .screenModule(new ScreenModule(this))
                 .applicationComponent(((TestDes) getApplication()).getApplicationComponent())

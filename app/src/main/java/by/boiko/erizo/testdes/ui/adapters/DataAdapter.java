@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +19,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.boiko.erizo.testdes.R;
 import by.boiko.erizo.testdes.db.Employee;
-import by.boiko.erizo.testdes.db.RealmModel;
 import by.boiko.erizo.testdes.ui.base.BaseViewHolder;
 
-public class RealmAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+public class DataAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public Context context;
     private List<Employee> employeeList = new ArrayList<>();
@@ -32,7 +29,7 @@ public class RealmAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new RealmAdapter.RealmViewHolder(
+        return new DataAdapter.RealmViewHolder(
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.item_realm, parent, false)
         );
     }

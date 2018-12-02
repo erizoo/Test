@@ -17,15 +17,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import by.boiko.erizo.testdes.R;
-import by.boiko.erizo.testdes.TestDes;
-import by.boiko.erizo.testdes.db.AppDatabase;
 import by.boiko.erizo.testdes.db.Employee;
-import by.boiko.erizo.testdes.db.RealmController;
-import by.boiko.erizo.testdes.db.RealmModel;
-import by.boiko.erizo.testdes.ui.adapters.RealmAdapter;
+import by.boiko.erizo.testdes.ui.adapters.DataAdapter;
 import by.boiko.erizo.testdes.ui.base.BaseActivity;
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 public class MainActivity extends BaseActivity implements MainMvpView{
 
@@ -39,7 +33,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
     @Inject
     MainMvpPresenter<MainMvpView> presenter;
 
-    private RealmAdapter realmAdapter;
+    private DataAdapter dataAdapter;
     private List<Employee> employees = new ArrayList<>();
     private boolean isSaved = false;
 
@@ -50,7 +44,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         getScreenComponent().inject(this);
         presenter.onAttach(this);
 
-        realmAdapter = new RealmAdapter();
+        dataAdapter = new DataAdapter();
 
         SharedPreferences sharedPreferences = this.getPreferences(MODE_PRIVATE);
         isSaved = sharedPreferences.getBoolean("IS_SAVED", false);
@@ -84,9 +78,9 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(realmAdapter);
+        recyclerView.setAdapter(dataAdapter);
 
-        realmAdapter.setItems(employees);
+        dataAdapter.setItems(employees);
         progressBar.setVisibility(View.GONE);
     }
 
@@ -116,17 +110,17 @@ public class MainActivity extends BaseActivity implements MainMvpView{
 
     @Override
     public void onSearchedData(List<Employee> employees) {
-        realmAdapter.setItems(employees);
+        dataAdapter.setItems(employees);
     }
 
     @Override
     public void onAscendingSortingData(List<Employee> employees) {
-        realmAdapter.setItems(employees);
+        dataAdapter.setItems(employees);
     }
 
     @Override
     public void onDescendingSortingData(List<Employee> employees) {
-        realmAdapter.setItems(employees);
+        dataAdapter.setItems(employees);
     }
 
 }
