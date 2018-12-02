@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import by.boiko.erizo.testdes.R;
 import by.boiko.erizo.testdes.db.RealmController;
 import by.boiko.erizo.testdes.db.RealmModel;
@@ -94,6 +95,21 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         progressBar.setVisibility(View.GONE);
     }
 
+    @OnClick(R.id.first_button)
+    public void ascendingSorting(){
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmModel> results = new RealmController(getContext()).ascendingSorting();
+        List<RealmModel> realmModelList = realm.copyFromRealm(results);
+        realmAdapter.setItems(realmModelList);
+    }
+
+    @OnClick(R.id.second_button)
+    public void descendingSorting(){
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmModel> results = new RealmController(getContext()).descendingSorting();
+        List<RealmModel> realmModelList = realm.copyFromRealm(results);
+        realmAdapter.setItems(realmModelList);
+    }
 
     @Override
     protected int getContentView() {

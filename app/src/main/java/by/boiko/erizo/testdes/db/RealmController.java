@@ -5,6 +5,7 @@ import android.content.Context;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class RealmController {
 
@@ -34,6 +35,20 @@ public class RealmController {
 
     public RealmResults<RealmModel> getInfo() {
         return realm.where(RealmModel.class).findAll();
+    }
+
+    public RealmResults<RealmModel> ascendingSorting() {
+        realm.beginTransaction();
+        RealmResults<RealmModel> rows = realm.where(RealmModel.class).findAll();
+        realm.commitTransaction();
+        return rows.sort("amount",Sort.ASCENDING);
+    }
+
+    public RealmResults<RealmModel> descendingSorting() {
+        realm.beginTransaction();
+        RealmResults<RealmModel> rows = realm.where(RealmModel.class).findAll();
+        realm.commitTransaction();
+        return rows.sort("amount",Sort.DESCENDING);
     }
 
 
